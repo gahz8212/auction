@@ -1,0 +1,42 @@
+{% extends 'layout.html'%} {% block content%}
+<div class="timeline">
+
+  <form id="change-form">
+    <label for="change-name"></label><input type="text" id="changename">
+    <input type="submit" value="닉네임 변경" class="btn">
+  </form>
+  <div class="profile">
+    <div>
+      <h3>팔로워</h3>
+      <ul>
+        {% for follower in user.Followers%}
+        <li>{{follower.nick}}</li>
+        {% endfor%}
+      </ul>
+    </div>
+    <div>
+      <h3>팔로잉</h3>
+      <ul>
+        {% for following in user.Followings%}
+        <li>{{following.nick}}</li>
+        {% endfor%}
+      </ul>
+    </div>
+  </div>
+
+
+
+
+</div>
+{% endblock%}
+{% block script%}
+<script>
+  if (document.getElementById('change-form')) {
+    document.getElementById('change-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newName = e.target.changename.value;
+      console.log(newName)
+      await axios.patch('/user/change', { newName }).then(() => { location.reload() }).catch(e => { console.error(e) })
+    })
+  };</script>
+{% endblock%}

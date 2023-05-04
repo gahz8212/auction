@@ -1,0 +1,46 @@
+{% extends 'layout.html'%}
+{% block good%}
+<div class="fullscreen">
+  <form action="/post/good" method="post" id="good-form" enctype="multipart/form-data">
+    <div class="input-group">
+      <label for="name">제품명</label><input type="text" name="name" id="name" autofocus required>
+    </div>
+    <div class="input-group">
+      <label for="price">시작가격</label><input type="number" name="price" id="price">
+    </div>
+    <div class="input-group">
+      <label for="file">사진</label><input type="file" id="file" multiple accept="image">
+    </div>
+    <div id="previews"></div>
+    <input type="hidden" name="hidden" id="hidden">
+    <div class="buttons">
+      <input type="submit" value="등록">
+      <a href="/">취소</a>
+    </div>
+  </form>
+</div>
+<script src="https://unpkg.com/axios/dist/axios"></script>
+<script>
+  document.getElementById('file').addEventListener('change', function () {
+    const tree = document.getElementById('previews')
+    const selectedCount = tree.children.length;
+    const hidden = document.querySelector('input[type="hidden"]')
+    const formData = new FormData()
+    for (i = this.files.length; i >= this.files.length - 3 + selectedCount; i--) {
+      formData.append('images', this.files[i])
+    }
+    axios.post('/post/image', formData)
+      .then((res) => {
+        res.data.map(image => {
+          const img = document.createElement('img')
+          img.src = image.url;
+          img.style.width = '100px';
+          hidden.value = hidden.value + '#' + image.url
+          tree.appendChild(img)
+        })
+
+      })
+      .catch(e => { console.error(e) })
+  })
+</script>
+{% endblock%}
